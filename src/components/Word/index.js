@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import bindTooltip from 'utils/bindTooltip';
 import { zeroPad } from 'helpers/StringHelpers';
+import { parseWordToolTip } from 'parsers';
 
 /* eslint-disable no-unused-vars */
 const CHAR_TYPE_WORD = 'word';
@@ -10,18 +11,6 @@ const CHAR_TYPE_RUB = 'rub';
 const CHAR_TYPE_SAJDAH = 'sajdah';
 
 class Word extends Component {
-  buildTooltip = (word, tooltip) => {
-    let title;
-    if (word.charType === CHAR_TYPE_END) {
-      title = `Verse ${word.verseKey.split(':')[1]}`;
-    } else if (word.charType === CHAR_TYPE_WORD) {
-      title = word[tooltip].text;
-    } else {
-      title = '';
-    }
-    return title;
-  };
-
   handleWordPlay = () => {
     const { word } = this.props;
     if (word.audio) {
@@ -54,20 +43,12 @@ class Word extends Component {
   };
 
   render() {
-    const {
-      tooltip,
-      word,
-      currentVerse,
-      isPlaying,
-      audioPosition,
-      useTextFont
-    } = this.props;
+    const { tooltip, word, currentVerse, isPlaying, useTextFont } = this.props;
 
     let text;
     let spacer;
-    const highlight = currentVerse === word.verseKey && isPlaying
-      ? 'highlight'
-      : '';
+    const highlight =
+      currentVerse === word.verseKey && isPlaying ? 'highlight' : '';
     const className = `${useTextFont
       ? 'text-'
       : ''}${word.className} ${word.charType} ${highlight} ${word.highlight
@@ -98,7 +79,7 @@ class Word extends Component {
           onDoubleClick={this.handleSegmentPlay}
           onClick={this.handleWordPlay}
           className={`${className} pointer`}
-          title={this.buildTooltip(word, tooltip)}
+          title={parseWordToolTip(word, tooltip)}
           dangerouslySetInnerHTML={{ __html: text }}
         />
         <small
